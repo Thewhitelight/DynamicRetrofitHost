@@ -22,7 +22,7 @@ public class DynamicInterceptor implements Interceptor {
         mHost = host;
     }
 
-    public static String getmHost() {
+    public static String getHost() {
         return mHost;
     }
 

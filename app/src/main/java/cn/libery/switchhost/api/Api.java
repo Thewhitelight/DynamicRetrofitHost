@@ -25,12 +25,11 @@ public class Api {
     public static final int REQUEST_SUCCESS = 200;
 
     private static final long DEFAULT_TIMEOUT = 60;
-    public static final String DAILY_HOST = "v3.wufazhuce.com:8000";
-    public static final String RELEASE_HOST = "v3.wufazhuce.com:8001";
-    public static final String PREVIEW_HOST = "v3.wufazhuce.com:8002";
+    public static final String DAILY_HOST = "is.snssdk.com";
+    public static final String PREVIEW_HOST = "is1.snssdk.com";
+    public static final String RELEASE_HOST = "is2.snssdk.com";
 
     public static final String PATH = "/api/";
-
     private static final String BASE_DAILY_URL = "http://" + DAILY_HOST + PATH;
     private static final String BASE_RELEASE_URL = "http://" + RELEASE_HOST + PATH;
 
@@ -52,7 +51,7 @@ public class Api {
         }
     }
 
-    protected Api() {
+    private Api() {
         final OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         builder.readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
@@ -77,42 +76,21 @@ public class Api {
         service = retrofit.create(ApiService.class);
     }
 
-
-    /**
-     * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
-     *
-     * @param <T> Subscriber真正需要的数据类型，也就是Data部分的数据类型
-     */
-    private static class HttpResultFunc1<T> implements Function<Response<T>, T> {
-        @Override
-        public T apply(Response<T> t) {
-            if (t.code == 0) {
-                return t.data;
-            } else {
-                throw new ApiException(t.code, t.msg);
-            }
-        }
+    public static Api getInstance() {
+        return ApiHolder.mInstance;
     }
 
-    /**
-     * 返回结果只有Result
-     * 用来统一处理Http的resultCode
-     */
-    private static class HttpResultFunc2 implements Function<Response, Boolean> {
-        @Override
-        public Boolean apply(Response response) {
-            if (response.code == REQUEST_SUCCESS) {
-                return true;
-            } else {
-                throw new ApiException(response.code, response.msg);
-            }
-        }
+    public static class ApiHolder {
+        static Api mInstance = new Api();
     }
 
-    protected <T> Flowable<T> doCompose(Flowable<Response<T>> observable) {
+    <T> Flowable<T> doCompose(Flowable<T> observable) {
         return observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new HttpResultFunc1<>());
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Flowable<Response> getArticle() {
+        return doCompose(service.article());
     }
 
 }
