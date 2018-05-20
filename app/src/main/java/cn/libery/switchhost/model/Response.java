@@ -215,6 +215,21 @@ public class Response {
         public void setPackage_name(String package_name) {
             this.package_name = package_name;
         }
+
+        @Override
+        public String toString() {
+            return "TipsBean{" +
+                    "type='" + type + '\'' +
+                    ", display_duration=" + display_duration +
+                    ", display_info='" + display_info + '\'' +
+                    ", display_template='" + display_template + '\'' +
+                    ", open_url='" + open_url + '\'' +
+                    ", web_url='" + web_url + '\'' +
+                    ", download_url='" + download_url + '\'' +
+                    ", app_name='" + app_name + '\'' +
+                    ", package_name='" + package_name + '\'' +
+                    '}';
+        }
     }
 
     public static class DataBean {
@@ -241,6 +256,14 @@ public class Response {
         public void setCode(String code) {
             this.code = code;
         }
+
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "content='" + content + '\'' +
+                    ", code='" + code + '\'' +
+                    '}';
+        }
     }
 
     @Override
@@ -255,8 +278,8 @@ public class Response {
                 ", has_more_to_refresh=" + has_more_to_refresh +
                 ", action_to_last_stick=" + action_to_last_stick +
                 ", feed_flag=" + feed_flag +
-                ", tips=" + tips +
-                ", data=" + data +
+                ", tips=" + tips.toString() +
+                ", data=" + data.toString() +
                 '}';
     }
 }
